@@ -40,11 +40,11 @@ RUN apt-get autoremove &&\
 
 FROM build AS builder
 
-#将内部的18019端口暴露出去
-EXPOSE 18019
+#将内部的8019端口暴露出去
+EXPOSE 8019
 
 ENV PYTHONPATH "${PYTHONPATH}:/app:/app/api:/app/utils"
 
-#使用uvicorn启动应用，IP为0.0.0.0，端口为18019（这里的端口是18019，那么EXPOSE暴露的端口也必须是这个）
-CMD ["uvicorn","main:app","--host","0.0.0.0","--port","18019","--reload"]
+#使用uvicorn启动应用，IP为0.0.0.0，端口为8019（这里的端口是8019，那么EXPOSE暴露的端口也必须是这个）
+CMD ["uvicorn","main:app","--host","0.0.0.0","--port","8019","--reload"]
 
