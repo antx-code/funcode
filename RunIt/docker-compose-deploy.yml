@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  RUNIT:
+    image: runit:1.0
+    restart: always
+    ports:
+      - 18019:18019
+    env_file:
+      - .env

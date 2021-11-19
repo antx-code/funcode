@@ -28,7 +28,7 @@ random_str = ''.join(random.choice(letters) for i in range(20))
 class RedisService():
     @logger.catch(level='ERROR')
     def __init__(self, passwd, redis_db):
-        # self.redis_client = Redis(host='', password=passwd, db=redis_db)   # passwd ='antx-auth-lock'
+        # self.redis_client = Redis(host='', password=passwd, db=redis_db)   # passwd ='antx-xauth-lock'
         self.redis_client = Redis(db=redis_db)
 
     @logger.catch(level='ERROR')
@@ -93,7 +93,7 @@ class Buff2SteamGui(tk.Frame):
         self.usr_name_var = tk.StringVar()
         self.password_var = tk.StringVar()
         self.auth2fa = tk.StringVar()
-        self.redis_service = RedisService(passwd='antx-auth-lock', redis_db=1)
+        self.redis_service = RedisService(passwd='antx-xauth-lock', redis_db=1)
         self.salt = '95_0^9_01'
         self.skey = 'antx-au_^_th-@#_$_?!'
 

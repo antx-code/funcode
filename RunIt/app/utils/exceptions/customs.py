@@ -1,3 +1,4 @@
+# services/soc-domain/project/api/exceptions/customs.py
 from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden, InternalServerError, Conflict
 from loguru import logger
 
@@ -45,6 +46,7 @@ class UnauthorizedAPIRequest(CustomException):
 
     status_code = Unauthorized.code
 
+
 class InvalidPermissions(CustomException):
     """
     Raise if the user doesn't have the permission for the requested resource
@@ -62,6 +64,7 @@ class InvalidAPIRequest(CustomException):
 
     status_code = BadRequest.code
 
+
 class ServerError(CustomException):
     """
     Generic internal error.
@@ -70,6 +73,7 @@ class ServerError(CustomException):
     """
 
     status_code = InternalServerError.code
+
 
 class DatabaseError(CustomException):
     """
@@ -80,12 +84,14 @@ class DatabaseError(CustomException):
 
     status_code = InternalServerError.code
 
+
 class RecordNotFound(DatabaseError):
     """
     Raised when the record was not found in the database.
     """
 
     status_code = NotFound.code
+
 
 class RecordAlreadyExists(DatabaseError):
     """

@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  RUNIT:
+    container_name: RunIt
+    image: runit:v1.0
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 18019:18019
+    env_file:
+      - .env
