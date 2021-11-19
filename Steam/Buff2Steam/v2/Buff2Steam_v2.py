@@ -28,8 +28,8 @@ random_str = ''.join(random.choice(letters) for i in range(20))
 class RedisService():
     @logger.catch(level='ERROR')
     def __init__(self, passwd, redis_db):
-        # self.redis_client = Redis(host='', password=passwd, db=redis_db)   # passwd ='antx-xauth-lock'
-        self.redis_client = Redis(db=redis_db)
+        self.redis_client = Redis(host='', password=passwd, db=redis_db)   # passwd ='antx-xauth-lock'
+        # self.redis_client = Redis(db=redis_db)
 
     @logger.catch(level='ERROR')
     def set_dep_key(self, key_name, key_value, expire_secs=None):
