@@ -1,11 +1,9 @@
 import time
 from fastapi import Request
-from loguru import logger
 import utils.xauth.verify as verify
 from utils.exceptions.customs import InvalidPermissions, UnauthorizedAPIRequest, RecordNotFound
 from __init__ import config
 
-@logger.catch(level='ERROR')
 def auth_required(request):
     """
     权限验证（用户必须有相关权限才能通过验证）
