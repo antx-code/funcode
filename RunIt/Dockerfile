@@ -14,29 +14,26 @@ COPY ./requirements.txt /app
 #COPY ./setup.py /app
 COPY ./app /app
 
+#使用国内163源
+ADD sources.list /etc/apt
+
 #切换到/app目录
 WORKDIR /app
+
+RUN curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add - &&\
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
+RUN apt-get update &&\
+    apt-get install -y redis-server &&\
+    apt-get install -y mongodb-org &&\
+    apt-get autoremove &&\
+    apt-get autoclean
 
 #使用豆瓣源https://pypi.douban.com/simple安装项目的python依赖
 RUN python3 -m pip install --upgrade pip && pip3 install -r requirements.txt --trusted-host https://pypi.douban.com/simple -i https://pypi.douban.com/simple
 
 RUN apt-get autoremove &&\
     apt-get autoclean
-
-#FROM scratch
-
-#RUN pip3 install -r requirements.txt --trusted-host https://pypi.tuna.tsinghua.edu.cn/simple -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-#RUN pip3 install -r requirements.txt
-
-#使用Cython对代码进行混淆
-#RUN python setup.py build_ext --inplace
-
-#删除源代码
-#RUN rm -rf api
-#RUN rm -rf utils
-#RUN rm -rf logs
-#RUN rm *.py
 
 FROM build AS builder
 
