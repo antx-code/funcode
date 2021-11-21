@@ -4,8 +4,8 @@ from loguru import logger
 
 @logger.catch(level='ERROR')
 def msg(status, data, code=None):
-    if code:
-        final_data = {'status': status, 'code': code, 'data':data}
+    if not code:
+        final_data = {'data': data, 'msg': status}
     else:
-        final_data = {'data':data, 'msg':status}
+        final_data = {'status': status, 'code': code, 'data': data}
     return JSONResponse(content=jsonable_encoder(final_data))

@@ -9,6 +9,10 @@ REDIS:
 AUTH:
   IDENTITY:
     - dev
+    - prod
     - antx
     - runit
-  SALT: 913059
+  SALT: '913059'
+
+DEVICE:
+  PASS

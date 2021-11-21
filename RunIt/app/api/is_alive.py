@@ -10,4 +10,5 @@ router = APIRouter(dependencies=[Depends(verification)])
 @logger.catch(level='ERROR')
 @router.get('/is_alive')
 async def is_alive():
-    return msg(status='success', data='alive')
+    alive_status, message = await aliveH()
+    return msg(status=alive_status, data=message)

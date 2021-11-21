@@ -4,10 +4,9 @@ from fastapi.responses import JSONResponse
 from loguru import logger
 
 # RunIt API
+from api.token import router as token_router
 from api.is_alive import router as alive_router
-from api.task_create import router as create_router
-from api.task_status import router as status_router
-from api.task_stop import router as stop_router
+from api.task import router as task_router
 
 from utils.exceptions.customs import InvalidPermissions, UnauthorizedAPIRequest, RecordNotFound, InvalidAPIRequest, ServerError, DatabaseError, InvalidContentType, RecordAlreadyExists
 
@@ -28,6 +27,13 @@ def generate_application() -> FastAPI:
     register_exception(application)
 
     application.include_router(
+        token_router,
+        prefix="/api",
+        tags=["RunIt generate token API"],
+        responses={404: {"description": "Not found"}}
+    )
+
+    application.include_router(
         alive_router,
         prefix="/api",
         tags=["RunIt is_alive API"],
@@ -35,23 +41,9 @@ def generate_application() -> FastAPI:
     )
 
     application.include_router(
-        create_router,
+        task_router,
         prefix="/api",
         tags=["RunIt task_create API"],
-        responses={404: {"description": "Not found"}}
-    )
-
-    application.include_router(
-        status_router,
-        prefix="/api",
-        tags=["RunIt task_status API"],
-        responses={404: {"description": "Not found"}}
-    )
-
-    application.include_router(
-        stop_router,
-        prefix="/api",
-        tags=["RunIt task_stop API"],
         responses={404: {"description": "Not found"}}
     )
 

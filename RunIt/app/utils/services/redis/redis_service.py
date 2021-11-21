@@ -79,8 +79,11 @@ class RedisService():
         :param key_name: The redis key that you want to query.
         :return: A string of the expire content.
         """
-        result = self.redis_client.get(key_name)
-        return result.decode()
+        try:
+            result = self.redis_client.get(key_name)
+            return result.decode()
+        except Exception as e:
+            return None
 
     @logger.catch('ERROR')
     def hset_redis(self, redis_key, content_key, content_value):

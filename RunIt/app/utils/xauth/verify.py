@@ -2,6 +2,8 @@ import jwt
 from loguru import logger
 from __init__ import config
 
+CONF = config['AUTH']
+
 @logger.catch(level='ERROR')
 def get_authorization(request):
     authorization = request.headers.get('Authorization')
@@ -16,7 +18,7 @@ def get_authorization(request):
 @logger.catch(level='ERROR')
 def verify_authtoken(token):
     try:
-        payload = jwt.decode(token, config.SALT, algorithms=['HS256'])
+        payload = jwt.decode(token, CONF['SALT'], algorithms=['HS256'])
     except Exception as e:
         return False, token
     if payload:

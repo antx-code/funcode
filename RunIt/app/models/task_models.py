@@ -2,10 +2,14 @@ from pydantic import BaseModel
 from typing import Optional
 import time
 
+class TaskLists(BaseModel):
+    page: int
+    size: int
+
 class TaskCreate(BaseModel):
-    room: str
+    room: int
     task_name: Optional[str] = f'RUNIT-{int(time.time())}'
     mode: str = 'record'
 
-class TaskStop(BaseModel):
+class TaskStopDelete(BaseModel):
     task_id: str
