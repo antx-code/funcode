@@ -1,6 +1,4 @@
-# services/soc-domain/project/api/exceptions/customs.py
 from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden, InternalServerError, Conflict
-from loguru import logger
 
 class CustomException(Exception):
     """Custom JSON based exception."""
@@ -18,7 +16,6 @@ class CustomException(Exception):
 
         if message is not None:
             self.message = message
-            logger.info(f'msg -> {self.message}')
         if status_code is not None:
             self.status_code = status_code
 

@@ -1,4 +1,3 @@
-from loguru import logger
 from utils.services.db_redis_connect.connect import *
 from __init__ import config
 

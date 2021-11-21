@@ -1,4 +1,3 @@
-from loguru import logger
 import json
 import time
 from utils.services.db_redis_connect.connect import *

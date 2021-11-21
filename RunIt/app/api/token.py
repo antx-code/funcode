@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from loguru import logger
+from fastapi import APIRouter
 from utils.services.base.api_base import msg
 from handler.token_handler import *
 from models.token_models import *

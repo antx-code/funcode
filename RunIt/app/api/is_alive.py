@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from loguru import logger
 from utils.services.base.api_base import msg
 from utils.xauth.antx_auth import verification
 from handler.alive_handler import *
