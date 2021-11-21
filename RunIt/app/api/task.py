@@ -20,7 +20,7 @@ async def get_all_task(task_info: TaskLists):
 @router.post('/create')
 async def task_create(task_info: TaskCreate):
     task_id = GeTaskId()
-    resp_data = await create_task(task_id, task_info.task_name, task_info.room, task_info.mode)
+    resp_data = await create_one_task(task_id, task_info.task_name, task_info.room, task_info.mode)
     return msg(status='success', data=resp_data)
 
 @logger.catch(level='ERROR')

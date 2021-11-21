@@ -72,7 +72,7 @@ async def get_task_list(page: int, size: int):
     return records, total_count
 
 @logger.catch(level='ERROR')
-async def create_task(task_id: str, task_name: str, room_id: int, mode: str):
+async def create_one_task(task_id: str, task_name: str, room_id: int, mode: str):
     tasks = {
         'task_id': task_id,
         'task_name': task_name,
