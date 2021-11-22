@@ -13,8 +13,8 @@ class AsyncMongo():
         :param col: The collection of the mongodb.
         """
         conf = config["MONGO"]
-        # client = AsyncIOMotorClient(conf["ADDRESS"], port)
-        client = AsyncIOMotorClient(f'mongodb://{conf["USERNAME"]}:{conf["PASSWORD"]}@{conf["ADDRESS"]}:{port}')
+        client = AsyncIOMotorClient(conf["ADDRESS"], port)
+        # client = AsyncIOMotorClient(f'mongodb://{conf["USERNAME"]}:{conf["PASSWORD"]}@{conf["ADDRESS"]}:{port}')
         database = client[db]
         self.collection = database[col]
 
