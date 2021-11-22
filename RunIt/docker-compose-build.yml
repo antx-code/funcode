@@ -1,28 +1,28 @@
 version: '3.8'
 
 services:
-  MongoDB:
-    image: mongo
-    container_name: runitmongo
-    restart: always
-    ports:
-      - "27077:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 123456
-      MONGO_BIND_IP: 0.0.0.0
-    networks:
-      - runit-net
-
-  Redis:
-    image: redis
-    container_name: runitredis
-    restart: always
-    ports:
-      - "6399:6379"
-    command: [ "redis-server", "--bind", "0.0.0.0", "--appendonly", "yes" ]
-    networks:
-      - runit-net
+#  MongoDB:
+#    image: mongo
+#    container_name: runitmongo
+#    restart: always
+#    ports:
+#      - "27077:27017"
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: 123456
+#      MONGO_BIND_IP: 0.0.0.0   # 有待商榷
+#    networks:
+#      - runit-net
+#
+#  Redis:
+#    image: redis
+#    container_name: runitredis
+#    restart: always
+#    ports:
+#      - "6399:6379"
+#    command: [ "redis-server", "--bind", "0.0.0.0", "--appendonly", "yes" ]    # bind 有待商榷
+#    networks:
+#      - runit-net
 
   RUNIT:
     container_name: RunIt
@@ -35,7 +35,7 @@ services:
     env_file:
       - .env
 
-# 网络配置
-networks:
-    runit-net: # runit-net是自定义的网络名称
-        driver: bridge  # 桥接方式
+## 网络配置
+#networks:
+#    runit-net: # runit-net是自定义的网络名称
+#        driver: bridge  # 桥接方式
