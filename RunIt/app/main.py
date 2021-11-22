@@ -4,9 +4,9 @@ from fastapi.responses import JSONResponse
 from loguru import logger
 
 # RunIt API
-from api.token import router as token_router
+from api.create_token import router as token_router
 from api.is_alive import router as alive_router
-from api.task import router as task_router
+from api.task_manager import router as task_router
 
 from utils.exceptions.customs import InvalidPermissions, UnauthorizedAPIRequest, RecordNotFound, InvalidAPIRequest, ServerError, DatabaseError, InvalidContentType, RecordAlreadyExists
 
