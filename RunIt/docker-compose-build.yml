@@ -20,7 +20,7 @@ services:
 #    restart: always
 #    ports:
 #      - "6399:6379"
-#    command: [ "redis-server", "--bind", "0.0.0.0", "--appendonly", "yes" ]    # bind 有待商榷
+#    command: [ "redis-server", "--bind", "0.0.0.0", "--appendonly", "yes" ]
 #    networks:
 #      - runit-net
 
