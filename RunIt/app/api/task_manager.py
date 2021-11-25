@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from utils.services.base.api_base import msg
 from utils.xauth.antx_auth import verification
 from handler.task_handler import *
 from models.task_models import *
+from tmp.fake_play import FakePlay
 
 router = APIRouter(dependencies=[Depends(verification)])
 
@@ -17,9 +18,11 @@ async def get_all_task(task_info: TaskLists):
 
 @logger.catch(level='ERROR')
 @router.post('/create')
-async def task_create(task_info: TaskCreate):
+async def task_create(task_info: TaskCreate, bk: BackgroundTasks):
     task_id = GeTaskId()
     resp_data = await create_one_task(task_id, task_info.task_name, task_info.room, task_info.mode)
+    fp = FakePlay()
+    bk.add_task(fp.fake_play)
     return msg(status='success', data=resp_data)
 
 @logger.catch(level='ERROR')

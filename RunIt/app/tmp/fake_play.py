@@ -2,6 +2,8 @@ import json
 import time
 import asyncio
 import uvloop
+import sys
+sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
 from random import randint as rant
 from utils.services.db_redis_connect.connect import *
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -132,16 +134,19 @@ class FakePlay():
     async def fake_play(self):
         task_ids = self.redis_service.read_redis('fakePlay')
         for task_id in task_ids:
-            status = await get_status(task_id)
-            if status == 'stopped' or status == 'finished':
-                continue
+            i = 30
             for fake_data in fake_datas:
                 await self.generate_fake_data(task_id, fake_data)
-            # await self.fake_connecting(task_id)
-            await self.fake(task_id)
-        # self.redis_service.redis_client.delete('fakePlay')
+            await self.fake_connecting(task_id)
+            while i >= 0:
+                status = await get_status(task_id)
+                if status == 'stopped' or status == 'finished':
+                    continue
+                await self.fake(task_id)
+                i = i - 1
             await set_status(task_id, 'finished')
             await set_record_status(task_id, 'finished')
+        # self.redis_service.redis_client.delete('fakePlay')
         return False
 
 if __name__ == '__main__':
