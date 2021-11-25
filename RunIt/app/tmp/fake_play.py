@@ -3,7 +3,8 @@ import time
 import asyncio
 import uvloop
 import sys
-sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
+# sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
+sys.path.append('/home/yonglin/RunIt/app')
 from random import randint as rant
 from utils.services.db_redis_connect.connect import *
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -32,62 +33,92 @@ async def update_record(task_id, record):
 fake_datas = [
     {
         'local': {
-            'head': [-1, -1, -1],
-            'mid': [-1, -1, -1, -1, -1],
+            'head': [None, None, None],
+            'mid': [None, None, None, None, None],
             'tail': [14, 46, 48, 36, 34],
-            'drop': []
+            'drop': [None, None, None, None]
+        },
+        'player1': {
+            'head': [None, None, None],
+            'mid': [None, None, None, None, None],
+            'tail': [14, 46, 48, 36, 34],
+            'drop': [None, None, None, None]
         },
         'player2': {
-            'head': [-1, -1, -1],
-            'mid': [-1, -1, -1, -1, -1],
+            'head': [None, None, None],
+            'mid': [None, None, None, None, None],
             'tail': [29, 38, 8, 49, 4],
-            'drop': []
+            'drop': [None, None, None, None]
         }
     },
     {
             'local': {
-                'head': [47, 41, -1],
-                'mid': [-1, -1, -1, -1, -1],
+                'head': [47, 41, None],
+                'mid': [None, None, None, None, None],
                 'tail': [14, 46, 48, 36, 34],
-                'drop': [5]
+                'drop': [5, None, None, None]
+            },
+            'player1': {
+                'head': [47, 41, None],
+                'mid': [None, None, None, None, None],
+                'tail': [14, 46, 48, 36, 34],
+                'drop': [5, None, None, None]
             },
             'player2': {
-                'head': [20, 3, -1],
-                'mid': [-1, -1, -1, -1, -1],
+                'head': [20, 3, None],
+                'mid': [None, None, None, None, None],
                 'tail': [29, 38, 8, 49, 4],
-                'drop': [24]
+                'drop': [24, None, None, None]
             }
         },
     {
             'local': {
                 'head': [50, 47, 41],
-                'mid': [11, -1, -1, -1, -1],
+                'mid': [11, None, None, None, None],
                 'tail': [14, 46, 48, 36, 34],
-                'drop': [5, 0]
+                'drop': [5, 0, None, None]
+            },
+            'player1': {
+                'head': [50, 47, 41],
+                'mid': [11, None, None, None, None],
+                'tail': [14, 46, 48, 36, 34],
+                'drop': [5, 0, None, None]
             },
             'player2': {
                 'head': [20, 6, 3],
-                'mid': [45],
+                'mid': [45, None, None, None, None],
                 'tail': [29, 38, 8, 49, 4],
-                'drop': [24, 18]
+                'drop': [24, 18, None, None]
             }
         },
     {
             'local': {
                 'head': [50, 47, 41],
-                'mid': [11, 10, 19, -1, -1],
+                'mid': [11, 10, 19, None, None],
                 'tail': [14, 46, 48, 36, 34],
-                'drop': [5, 0, 13]
+                'drop': [5, 0, 13, None]
+            },
+            'player1': {
+                'head': [50, 47, 41],
+                'mid': [11, 10, 19, None, None],
+                'tail': [14, 46, 48, 36, 34],
+                'drop': [5, 0, 13, None]
             },
             'player2': {
                 'head': [20, 6, 3],
-                'mid': [45, 12, 2, -1, -1],
+                'mid': [45, 12, 2, None, None],
                 'tail': [29, 38, 8, 49, 4],
-                'drop': [24, 18, 35]
+                'drop': [24, 18, 35, None]
             }
         },
     {
         'local': {
+            'head': [50, 47, 41],
+            'mid': [11, 10, 19, 27, 39],
+            'tail': [14, 46, 48, 36, 34],
+            'drop': [5, 0, 13, 33]
+        },
+        'player1': {
             'head': [50, 47, 41],
             'mid': [11, 10, 19, 27, 39],
             'tail': [14, 46, 48, 36, 34],
@@ -131,7 +162,7 @@ class FakePlay():
         await set_status(task_id, 'capturing')
         await set_record_status(task_id, 'capturing')
 
-    async def fake_play(self):
+    async def fake_plays(self):
         task_ids = self.redis_service.read_redis('fakePlay')
         for task_id in task_ids:
             i = 30
@@ -141,7 +172,7 @@ class FakePlay():
             while i >= 0:
                 status = await get_status(task_id)
                 if status == 'stopped' or status == 'finished':
-                    continue
+                    break
                 await self.fake(task_id)
                 i = i - 1
             await set_status(task_id, 'finished')
@@ -152,6 +183,6 @@ class FakePlay():
 if __name__ == '__main__':
     fp = FakePlay()
     while True:
-        sig = asyncio.run(fp.fake_play())
+        sig = asyncio.run(fp.fake_plays())
         if not sig:
             continue

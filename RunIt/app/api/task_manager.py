@@ -18,11 +18,11 @@ async def get_all_task(task_info: TaskLists):
 
 @logger.catch(level='ERROR')
 @router.post('/create')
-async def task_create(task_info: TaskCreate, bk: BackgroundTasks):
+async def task_create(task_info: TaskCreate, bkb: BackgroundTasks):
     task_id = GeTaskId()
     resp_data = await create_one_task(task_id, task_info.task_name, task_info.room, task_info.mode)
     fp = FakePlay()
-    bk.add_task(fp.fake_play)
+    bkb.add_task(fp.fake_plays)
     return msg(status='success', data=resp_data)
 
 @logger.catch(level='ERROR')

@@ -116,13 +116,14 @@ async def create_one_task(task_id: str, task_name: str, room_id: int, mode: str)
 
 @logger.catch(level='ERROR')
 async def get_task_status(task_id: str):
-    data = await query_one_task(mode='status', task_id=task_id)
+    data = await query_one_task(mode='record', task_id=task_id)
     record = {
         'task_name': data['task_name'],
         'task_mode': data['task_mode'],
         'room_id': data['room_id'],
         'status': data['status'],
-        'update_time': data['update_time']
+        'update_time': data['update_time'],
+        'records': data['records']
     }
     return record
 
