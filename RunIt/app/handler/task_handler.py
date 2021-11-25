@@ -58,6 +58,7 @@ def task_living(task_id: str, info: dict, mode: str = 'new'):
         data = json.loads(infos)
         data[info['key']] = info['value']
         data = json.dumps(data, ensure_ascii=False)
+    redis_service.redis_client.delete('fakePlay')
     redis_service.new_insert_content('fakePlay', task_id)
     redis_service.set_dep_key(task_id, data)
 

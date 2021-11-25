@@ -118,7 +118,7 @@ class FakePlay():
             print(data)
             record = data['fake_data']
             await update_record(task_id, record)
-            await asyncio.sleep(2)
+            await asyncio.sleep(rant(2, 4))
 
     async def fake_connecting(self, task_id: str):
         i = rant(3, 6)
@@ -139,7 +139,7 @@ class FakePlay():
                 await self.generate_fake_data(task_id, fake_data)
             # await self.fake_connecting(task_id)
             await self.fake(task_id)
-        self.redis_service.redis_client.delete('fakePlay')
+        # self.redis_service.redis_client.delete('fakePlay')
         return False
 
 if __name__ == '__main__':
