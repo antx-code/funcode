@@ -140,6 +140,8 @@ class FakePlay():
             # await self.fake_connecting(task_id)
             await self.fake(task_id)
         # self.redis_service.redis_client.delete('fakePlay')
+            await set_status(task_id, 'finished')
+            await set_record_status(task_id, 'finished')
         return False
 
 if __name__ == '__main__':
