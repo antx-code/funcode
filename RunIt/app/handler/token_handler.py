@@ -1,7 +1,7 @@
 from loguru import logger
 import time
 import jwt
-from __init__ import config
+from init import config
 
 CONF = config['AUTH']
 

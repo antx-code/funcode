@@ -1,6 +1,6 @@
 import jwt
 from loguru import logger
-from __init__ import config
+from init import config
 
 CONF = config['AUTH']
 

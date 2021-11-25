@@ -58,7 +58,15 @@ def task_living(task_id: str, info: dict, mode: str = 'new'):
         data = json.loads(infos)
         data[info['key']] = info['value']
         data = json.dumps(data, ensure_ascii=False)
+    redis_service.new_insert_content('fakePlay', task_id)
     redis_service.set_dep_key(task_id, data)
+
+@logger.catch(level='ERROR')
+def get_task_living(task_id):
+    redis_service = redis_connection(redis_db=1)
+    infos = redis_service.get_key_expire_content(task_id)
+    data = json.loads(infos)
+    return data
 
 @logger.catch(level='ERROR')
 async def get_task_list(page: int, size: int):
@@ -149,4 +157,5 @@ async def delete_one_task(task_id: str):
 async def get_one_record(task_id: str):
     record = await query_one_task(mode='record', task_id=task_id)
     del record['is_deleted']
+    # record = get_task_living(task_id)
     return record

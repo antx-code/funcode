@@ -2,7 +2,7 @@ import time
 from fastapi import Request
 import utils.xauth.verify as verify
 from utils.exceptions.customs import InvalidPermissions, UnauthorizedAPIRequest, RecordNotFound
-from __init__ import config
+from init import config
 
 CONF = config['AUTH']
 

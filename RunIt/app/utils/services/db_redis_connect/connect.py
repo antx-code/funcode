@@ -4,7 +4,7 @@ import uvloop
 from utils.services.redis.redis_service import RedisService
 from utils.services.db.async_mongodb import AsyncMongo
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-from __init__ import config
+from init import config
 
 DB_CONF = config['MONGO']
 REDIS_CONF = config['REDIS']

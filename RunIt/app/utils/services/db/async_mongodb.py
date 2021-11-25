@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from loguru import logger
-from __init__ import config
+from init import config
 
 class AsyncMongo():
     @logger.catch(level='ERROR')

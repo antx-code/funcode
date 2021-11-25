@@ -1,14 +1,14 @@
 from redis import Redis
 from loguru import logger
 import json
-from __init__ import config
+from init import config
 
 class RedisService():
     @logger.catch(level='ERROR')
     def __init__(self, port, redis_db=0):
         conf = config['REDIS']
-        # self.redis_client = Redis(host=conf['HOST'], port=port, db=redis_db)
-        self.redis_client = Redis(host=conf['HOST'], port=port, password=conf['PASSWORD'], db=redis_db)
+        self.redis_client = Redis(host=conf['HOST'], port=port, db=redis_db)
+        # self.redis_client = Redis(host=conf['HOST'], port=port, password=conf['PASSWORD'], db=redis_db)
 
     @logger.catch(level='ERROR')
     def new_insert_content(self, redis_key, new_content):
