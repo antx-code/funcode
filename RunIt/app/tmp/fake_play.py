@@ -178,11 +178,8 @@ class FakePlay():
             await set_status(task_id, 'finished')
             await set_record_status(task_id, 'finished')
         # self.redis_service.redis_client.delete('fakePlay')
-        return False
+        # return False
 
 if __name__ == '__main__':
     fp = FakePlay()
-    while True:
-        sig = asyncio.run(fp.fake_plays())
-        if not sig:
-            continue
+    sig = asyncio.run(fp.fake_plays())
