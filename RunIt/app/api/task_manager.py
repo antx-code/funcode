@@ -1,3 +1,4 @@
+import save as save
 from fastapi import APIRouter, Depends, BackgroundTasks
 from utils.services.base.api_base import msg
 from utils.xauth.antx_auth import verification
@@ -47,4 +48,10 @@ async def task_delete(task_info: TaskStopDelete):
 @router.get('/record/{task_id}')
 async def task_record(task_id):
     resp_data = await get_one_record(task_id)
+    return msg(status='success', data=resp_data)
+
+@logger.catch(level='ERROR')
+@router.post('/app/storage_record')
+async def save_play_records(save_info: AppStorageRecord):
+    resp_data = await save_one_play_record(save_info.task_id, save_info.room, save_info.status, save_info.record)
     return msg(status='success', data=resp_data)

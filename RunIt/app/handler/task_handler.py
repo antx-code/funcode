@@ -58,8 +58,8 @@ def task_living(task_id: str, info: dict, mode: str = 'new'):
         data = json.loads(infos)
         data[info['key']] = info['value']
         data = json.dumps(data, ensure_ascii=False)
-    redis_service.redis_client.delete('fakePlay')
-    redis_service.new_insert_content('fakePlay', task_id)
+    redis_service.redis_client.delete('recording')
+    redis_service.new_insert_content('recording', task_id)
     redis_service.set_dep_key(task_id, data)
 
 @logger.catch(level='ERROR')
@@ -102,9 +102,7 @@ async def create_one_task(task_id: str, task_name: str, room_id: int, mode: str)
         'room_id': room_id,
         'status': 'pending',
         'records': {},  # records 由app侧生成
-        'create_time': now(),
-        'update_time': now(),
-        'record_time': now()
+        'update_time': now()
     }
     task_living(task_id, living_info)
     resp = {
@@ -114,18 +112,23 @@ async def create_one_task(task_id: str, task_name: str, room_id: int, mode: str)
     }
     return resp
 
+# @logger.catch(level='ERROR')
+# async def get_task_status(task_id: str):
+#     data = await query_one_task(mode='record', task_id=task_id)
+#     record = {
+#         'task_name': data['task_name'],
+#         'task_mode': data['task_mode'],
+#         'room_id': data['room_id'],
+#         'status': data['status'],
+#         'update_time': data['update_time'],
+#         'records': data['records']
+#     }
+#     return record
+
 @logger.catch(level='ERROR')
 async def get_task_status(task_id: str):
-    data = await query_one_task(mode='record', task_id=task_id)
-    record = {
-        'task_name': data['task_name'],
-        'task_mode': data['task_mode'],
-        'room_id': data['room_id'],
-        'status': data['status'],
-        'update_time': data['update_time'],
-        'records': data['records']
-    }
-    return record
+    data = await get_task_living(task_id)
+    return data
 
 @logger.catch(level='ERROR')
 async def stop_one_task(task_id: str):
@@ -161,3 +164,13 @@ async def get_one_record(task_id: str):
     del record['is_deleted']
     # record = get_task_living(task_id)
     return record
+
+@logger.catch(level='ERROR')
+async def save_one_play_record(task_id: str, room: int, status: str, record: str):
+    dict_record = json.loads(record)
+    update_info = {'records': record}
+    await update_one('RunIt', 'tasks', task_id, update_info)
+    await update_one('RunIt', 'tasks', task_id, {'status': status})
+    await update_one('RunIt', 'records', task_id, update_info)
+    await update_one('RunIt', 'records', task_id, {'status': status})
+    return {'task_id': task_id, 'room': room}
