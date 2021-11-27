@@ -69,6 +69,15 @@ def get_task_living(task_id):
     data = json.loads(infos)
     return data
 
+def set_living_status_redis(task_id: str, info: dict):
+    redis_service = redis_connection(redis_db=1)
+    o_datas = redis_service.get_key_expire_content(task_id)
+    o_data = json.loads(o_datas)
+    for inx, (k, v) in enumerate(info.items()):
+        o_data[k] = v
+    data = json.dumps(o_data, ensure_ascii=False)
+    redis_service.set_dep_key(task_id, data)
+
 @logger.catch(level='ERROR')
 async def get_task_list(page: int, size: int):
     db = await db_connection('RunIt', 'tasks')
@@ -166,9 +175,12 @@ async def get_one_record(task_id: str):
     return record
 
 @logger.catch(level='ERROR')
-async def save_one_play_record(task_id: str, room: int, status: str, record: str):
-    dict_record = json.loads(record)
+async def save_one_play_record(task_id: str, room: int, status: str, record: dict):
+    # dict_record = json.loads(record)
     update_info = {'records': record}
+    set_living_status_redis(task_id, {'records': record})
+    set_living_status_redis(task_id, {'status': status})
+    set_living_status_redis(task_id, {'update_time': now()})
     await update_one('RunIt', 'tasks', task_id, update_info)
     await update_one('RunIt', 'tasks', task_id, {'status': status})
     await update_one('RunIt', 'records', task_id, update_info)
