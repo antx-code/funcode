@@ -6,8 +6,9 @@ MONGO:
 
 REDIS:
   HOST: '127.0.0.1'
-  PORT: 57878
-  PASSWORD: runit@redis
+#  PORT: 57878
+  PORT: 6379
+#  PASSWORD: runit@redis
 
 AUTH:
   IDENTITY:

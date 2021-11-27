@@ -19,16 +19,34 @@ async def set_record_status(task_id, status):
     update_info = {'$set': {'status': status}}
     db.collection.update_one({'task_id': task_id}, update_info, upsert=True)
 
+def set_living_status_redis(task_id: str, info: dict):
+    redis_service = redis_connection(redis_db=1)
+    o_datas = redis_service.get_key_expire_content(task_id)
+    o_data = json.loads(o_datas)
+    for inx, (k, v) in enumerate(info.items()):
+        o_data[k] = v
+    data = json.dumps(o_data, ensure_ascii=False)
+    redis_service.set_dep_key(task_id, data)
+
 async def get_status(task_id):
     db = await db_connection('RunIt', 'tasks')
     info = await db.collection.find_one({'task_id': task_id})
     return info['status']
+
+def get_living_status(task_id):
+    redis_service = redis_connection(redis_db=1)
+    infos = redis_service.get_key_expire_content(task_id)
+    data = json.loads(infos)
+    return data['status']
 
 async def update_record(task_id, record):
     db = await db_connection('RunIt', 'records')
     update_info = {'$set': {'records': record}}
     db.collection.update_one({'task_id': task_id}, update_info, upsert=True)
 
+def now():
+    now_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    return now_time
 
 fake_datas = [
     {
@@ -151,6 +169,7 @@ class FakePlay():
             print(data)
             record = data['fake_data']
             await update_record(task_id, record)
+            set_living_status_redis(task_id, {'records': record, 'update_time': now()})
             await asyncio.sleep(rant(2, 4))
 
     async def fake_connecting(self, task_id: str):
@@ -159,24 +178,28 @@ class FakePlay():
             await asyncio.sleep(1)
             i = i - 1
             await set_status(task_id, 'connecting')
+            set_living_status_redis(task_id, {'status': 'connecting', 'update_time': now()})
+        set_living_status_redis(task_id, {'status': 'capturing', 'update_time': now()})
         await set_status(task_id, 'capturing')
         await set_record_status(task_id, 'capturing')
 
     async def fake_plays(self):
-        task_ids = self.redis_service.read_redis('fakePlay')
+        task_ids = self.redis_service.read_redis('recording')
         for task_id in task_ids:
             i = 30
             for fake_data in fake_datas:
                 await self.generate_fake_data(task_id, fake_data)
             await self.fake_connecting(task_id)
             while i >= 0:
-                status = await get_status(task_id)
+                # status = await get_status(task_id)
+                status = get_living_status(task_id)
                 if status == 'stopped' or status == 'finished':
                     break
                 await self.fake(task_id)
                 i = i - 1
             await set_status(task_id, 'finished')
             await set_record_status(task_id, 'finished')
+            set_living_status_redis(task_id, {'status': 'finished', 'update_time': now()})
         # self.redis_service.redis_client.delete('fakePlay')
         # return False
 

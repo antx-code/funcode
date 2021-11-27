@@ -127,7 +127,7 @@ async def create_one_task(task_id: str, task_name: str, room_id: int, mode: str)
 
 @logger.catch(level='ERROR')
 async def get_task_status(task_id: str):
-    data = await get_task_living(task_id)
+    data = get_task_living(task_id)
     return data
 
 @logger.catch(level='ERROR')
