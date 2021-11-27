@@ -150,7 +150,7 @@ async def stop_one_task(task_id: str):
         'key': 'status',
         'value': status
     }
-    task_living(task_id, redis_status, mode='update')
+    set_living_status_redis(task_id, {'status': status})
     record = {
         'task_id': task_id,
         'is_stopped': True
@@ -161,6 +161,8 @@ async def stop_one_task(task_id: str):
 async def delete_one_task(task_id: str):
     await delete_one('RunIt', 'tasks', task_id)
     await delete_one('RunIt', 'records', task_id)
+    redis_service = redis_connection(redis_db=1)
+    redis_service.redis_client.delete(task_id)
     record = {
         'task_id': task_id,
         'is_deleted': True
