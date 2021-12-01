@@ -128,3 +128,5 @@ dmypy.json
 .pyre/
 
 .idea/
+/RunIt/airtcore/log/
+/RunIt/airtcore/pics/

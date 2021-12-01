@@ -5,6 +5,7 @@ import uvloop
 import httpx
 import sys
 from loguru import logger
+import jwt
 from init import config
 # sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
 sys.path.append('/home/yonglin/RunIt/app')
@@ -17,6 +18,17 @@ REDIS_CONF = config['REDIS']
 def now():
     now_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     return now_time
+
+def create_token():
+    payload = {
+        "iat": int(time.time()),
+        "exp": int(time.time()) + 86400 * 7,  # 有效时间7天
+        "scopes": ['open'],
+        "identity": 'dev'
+    }
+    token = jwt.encode(payload, '913059', algorithm='HS256')
+    # return {'access_token': token, 'identity': 'dev'}
+    return token
 
 @logger.catch(level='ERROR')
 def redis_connection(port=REDIS_CONF['PORT'], redis_db=0):
@@ -53,12 +65,19 @@ def get_playing_room_taskid():
 @logger.catch(level='ERROR')
 async def push_record2serv(task_id: str, room: int, status: str, record: dict):
     url = 'http://120.131.14.155:8019/api/app/storage_record'
+    header = {'Authorization': f'Bearer {create_token()}'}
     post_data = {
         "task_id": task_id,
         "room": room,
         "status": status,
         "record": record
     }
-    async with httpx.AsyncClient(verify=False, timeout=5) as client:
-        await client.post(url, json=post_data)
+    async with httpx.AsyncClient(verify=False, timeout=5, headers=header) as client:
+        resp = await client.post(url, json=post_data)
+        logger.info(resp)
     return True
+
+@logger.catch(level='ERROR')
+def del_redis_record(task_id):
+    redis_service = redis_connection(redis_db=1)
+    redis_service.redis_client.srem('recording', task_id)

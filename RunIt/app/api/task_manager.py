@@ -21,8 +21,8 @@ async def get_all_task(task_info: TaskLists):
 async def task_create(task_info: TaskCreate, bkb: BackgroundTasks):
     task_id = GeTaskId()
     resp_data = await create_one_task(task_id, task_info.task_name, task_info.room, task_info.mode)
-    fp = FakePlay()
-    bkb.add_task(fp.fake_plays)
+    # fp = FakePlay()
+    # bkb.add_task(fp.fake_plays)
     return msg(status='success', data=resp_data)
 
 @logger.catch(level='ERROR')
