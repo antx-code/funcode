@@ -8,19 +8,22 @@ init_poker = {
         'head': [None, None, None],
         'mid': [None, None, None, None, None],
         'tail': [None, None, None, None, None],
-        'drop': [None, None, None, None]
+        'drop': [None, None, None, None],
+        'hand': [None, None, None]
     },
     'player1': {
         'head': [None, None, None],
         'mid': [None, None, None, None, None],
         'tail': [None, None, None, None, None],
-        'drop': [None, None, None, None]
+        'drop': [None, None, None, None],
+        'hand': [None, None, None]
     },
     'player2': {
             'head': [None, None, None],
             'mid': [None, None, None, None, None],
             'tail': [None, None, None, None, None],
-            'drop': [None, None, None, None]
+            'drop': [None, None, None, None],
+            'hand': [None, None, None]
         }
 }
 

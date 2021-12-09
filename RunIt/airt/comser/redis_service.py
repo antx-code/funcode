@@ -1,14 +1,20 @@
 from redis import Redis
 from loguru import logger
 import json
+import base64
+import struct
+import numpy
 from init import config
 
 class RedisService():
     @logger.catch(level='ERROR')
-    def __init__(self, port, redis_db=0):
-        conf = config['REDIS']
-        # self.redis_client = Redis(host=conf['HOST'], port=port, db=redis_db)
-        self.redis_client = Redis(host=conf['HOST'], port=port, password=conf['PASSWORD'], db=redis_db)
+    def __init__(self, port, redis_db=0, mode='server'):
+        if mode == 'server':
+            conf = config['REDIS']['SERVER']
+            self.redis_client = Redis(host=conf['HOST'], port=port, password=conf['PASSWORD'], db=redis_db)
+        else:
+            conf = config['REDIS']['LOCAL']
+            self.redis_client = Redis(host=conf['HOST'], port=port, db=redis_db)
 
     @logger.catch(level='ERROR')
     def new_insert_content(self, redis_key, new_content):
@@ -115,3 +121,49 @@ class RedisService():
         resp = self.redis_client.hget(name=redis_key, key=content_key).decode()
         result = json.loads(resp)
         return result
+
+
+
+    def numpy_save(self, key: str, numpy_ndarray: numpy.ndarray) -> None:
+        """将Numpy数组存入Redis数据库。
+
+        Parameters
+        ----------
+        key : str
+            键字符串。
+        numpy_ndarray : numpy.ndarray
+            待存储数组。
+        """
+        shape = numpy_ndarray.shape
+        dim = len(shape)
+        value = struct.pack(''.join(['>I'] + ['I' * dim]), *((dim,) + shape))
+        value = base64.a85encode(value + numpy_ndarray.tobytes())  # 得转换成字符串，不然取出时候会报一个错
+        self.redis_client.set(key, value)
+        self.redis_client.close()
+
+    def numpy_read(self, key: str, dtype) -> numpy.ndarray:
+        """从Redis中读取一个Numpy数组。
+
+        Parameters
+        ----------
+        key : str
+            键字符串。
+        dtype : Any
+            指定数组元素数据类型。
+
+        Returns
+        -------
+        numpy.ndarray
+            从Redis键值对取出的数组。
+        """
+        SIZE = 4
+        bytes = base64.a85decode(self.redis_client.get(key))
+        self.redis_client.close()
+        dim = struct.unpack('>I', bytes[:1 * SIZE])[0]
+        shape = struct.unpack('>%s' % ('I' * dim), bytes[1 * SIZE:(dim + 1) * SIZE])
+        ret = numpy.frombuffer(
+            bytes,
+            offset=(dim + 1) * SIZE,
+            dtype=dtype
+        ).reshape(shape)
+        return ret

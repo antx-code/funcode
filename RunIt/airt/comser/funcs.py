@@ -9,10 +9,8 @@ import jwt
 from init import config
 # sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
 sys.path.append('/home/yonglin/RunIt/app')
-from redis_service import RedisService
+from comser.redis_service import RedisService
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-REDIS_CONF = config['REDIS']
 
 @logger.catch(level='ERROR')
 def now():
@@ -31,8 +29,12 @@ def create_token():
     return token
 
 @logger.catch(level='ERROR')
-def redis_connection(port=REDIS_CONF['PORT'], redis_db=0):
-    redis_service = RedisService(port=port, redis_db=redis_db)
+def redis_connection(redis_db=0, mode='server'):
+    if mode == 'server':
+        db_port = config['REDIS']['SERVER']['PORT']
+    else:
+        db_port = config['REDIS']['LOCAL']['PORT']
+    redis_service = RedisService(port=db_port, redis_db=redis_db, mode=mode)
     return redis_service
 
 @logger.catch(level='ERROR')

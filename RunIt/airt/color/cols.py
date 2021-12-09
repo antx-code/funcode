@@ -1,6 +1,5 @@
 import cv2
-import numpy as np
-import colorList
+from color.colorList import getColorList
 
 # 处理图片
 def get_color(frame):
@@ -9,7 +8,7 @@ def get_color(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     maxsum = -100
     color = None
-    color_dict = colorList.getColorList()
+    color_dict = getColorList()
     for d in color_dict:
         mask = cv2.inRange(hsv, color_dict[d][0], color_dict[d][1])
         cv2.imwrite(colo_p + d + '.png', mask)
