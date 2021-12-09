@@ -150,9 +150,9 @@ class RunIt():
             if status == 'stopped' or status == 'finished':
                 return -1
 
-            self.poco.click([0.56, 0.697])
+            self.poco.click([0.525, 0.638])
             snap_file = f'{now_path}/pics/snapshot/{task_id}/{id_worker.get_id()}.png'
-            screen = mx4.snapshot(filename=snap_file, quality=99)                                             # 对屏幕进行完整截图
+            screen = mx4.snapshot(quality=99)                                             # 对屏幕进行完整截图
             logger.info('完成截图，准备分析...')
             start2 = time.time()
             await asyncio.create_task(cac(task_id, screen, record, SIG))

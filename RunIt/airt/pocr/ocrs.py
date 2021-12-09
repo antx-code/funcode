@@ -2,26 +2,26 @@
 # import uvloop
 import time
 import ddddocr
-# import easyocr
+import easyocr
 from init import config
 from poker_cards import *
 # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 # uvloop.install()
 
 # reader = easyocr.Reader(['ch_sim','en'])
-# reader = easyocr.Reader(['en'])
+reader = easyocr.Reader(['en'])
 
 CONF = config['COLOR']
 ocr = ddddocr.DdddOcr()
 
-# def easyocr_poker(filename):
-#     result = reader.readtext(filename, detail=0)
-#     if not result:
-#         return None
-#     result = result[0].upper()
-#     if result not in POKER_SCOPE:
-#         return None
-#     return result
+def easyocr_poker(filename):
+    result = reader.readtext(filename, detail=0)
+    if not result:
+        return None
+    result = result[0].upper()
+    if result not in POKER_SCOPE:
+        return None
+    return result
 
 def ddddocr_poker(filename):
     with open(filename, 'rb') as f:
@@ -46,6 +46,11 @@ def ddddocr_poker(filename):
     #     result = result.replace('U', 'Q')
     if result == '1':
         result = '10'
+    if 'D' in result:
+        easy_result = easyocr_poker(filename)
+        print(f'easy result: {result}')
+        if easy_result != result and easy_result:
+            result = easy_result
     if result in POKER_SCOPE:
         print(f'POKER_SCOPE result: {result}')
         return result

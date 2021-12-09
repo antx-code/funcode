@@ -55,9 +55,11 @@ def poker_dia(filename, task_id, records, record_player, record_dao_poker, inx):
     print(f'********** poker number: {record} **********')
 
     print(f'records[{record_player}][{record_dao_poker}][{inx}]: {records[record_player][record_dao_poker][inx]}')
-
-    records[record_player][record_dao_poker][inx] = record
-    set_living_status_redis(task_id, {'records': records})
+    if not record and records[record_player][record_dao_poker][inx]:
+        pass
+    else:
+        records[record_player][record_dao_poker][inx] = record
+        set_living_status_redis(task_id, {'records': records})
 
 if __name__ == '__main__':
     start = time.time()
