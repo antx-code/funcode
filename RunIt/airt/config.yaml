@@ -3,7 +3,7 @@ REDIS:
     HOST: '127.0.0.1'
     PORT: 6379
   SERVER:
-    HOST: '120.131.14.155'
+    HOST: '127.0.0.1'
     PORT: 57878
     PASSWORD: runit@redis
 
