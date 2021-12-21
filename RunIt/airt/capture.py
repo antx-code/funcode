@@ -23,8 +23,8 @@ lgr.setLevel(logging.INFO)
 
 CONF = config['CORP_IMG']
 CORP_PLAYER = ['LOCAL', 'PLAYER1', 'PLAYER2']
-# CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP', 'HAND']
-CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP']
+CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP', 'HAND']
+# CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP']
 
 POKER_RELA = {
     'LOCAL': 'local',
@@ -34,7 +34,7 @@ POKER_RELA = {
     'MID': 'mid',
     'TAIL': 'tail',
     'DROP': 'drop',
-    # 'HAND': 'hand'
+    'HAND': 'hand'
 }
 
 id_worker = IdWorker(0, 0)
@@ -62,6 +62,7 @@ class RunIt():
 
     def room_in(self, room_id: int):                                            # 进入游戏房间并初始化数据结构, 进入房间
         self.poco.click([0.302, 0.953])                                         # 点击"约局"
+        # self.poco.click([0.302, 0.953])
         self.poco.click([0.428, 0.347])                                         # room id 输入框
         text(str(room_id))                                                      # 输入房间号
         self.poco.click([0.471, 0.418])                                         # 点击屏幕
@@ -74,17 +75,19 @@ class RunIt():
                 self.poco.click([0.051, 0.413])
                 break
             if exists(Template(r"pics/roomin/6.png")):
-                self.poco.click([0.508, 0.622])                                 # 点击"带分进入"
+                self.poco.click([0.508, 0.698])                                 # 点击"带分进入"
                 break
             if exists(Template(r'pics/roomin/9.png')):
-                self.poco.click([0.503, 0.587])                                 # 点击"确定"
+                self.poco.click([0.508, 0.589])                                 # 点击"确定"
         # self.poco.click([0.528, 0.654])                                       # 点击"准备"
         touch(Template(r'pics/roomin/7.png'))
         logger.info(f'已成功进入牌局房间{room_id}，并进入准备，等待游戏...')
+        time.sleep(3)
 
     def room_normal_out(self, room_id):
-        self.poco.click([0.505, 0.472])                                         # 点击"确定"
-        self.poco.click([0.041, 0.06])                                          # 点击"返回"
+        self.poco.click([0.5, 0.64])                                         # 点击"确定"
+        # self.poco.click([0.041, 0.06])                                          # 点击"返回"
+        mx4.keyevent('BACK')
         self.poco.click([0.505, 0.956])                                         # 点击"小飞机"
         # self.poco.click([0.302, 0.953])                                       # 点击"约局"
         logger.info(f'已成功退出牌局房间{room_id}')
@@ -97,6 +100,8 @@ class RunIt():
                 self.poco.click([0.353, 0.589])
         except Exception as e:
             self.poco.click([0.353, 0.589])
+        # mx4.keyevent('BACK')
+        # mx4.keyevent('BACK')
         self.poco.click([0.505, 0.956])                                         # 点击"小飞机"
         # self.poco.click([0.302, 0.953])                                       # 点击"约局"
         logger.info(f'已成功退出牌局房间{room_id}')
@@ -131,18 +136,20 @@ class RunIt():
         # await asyncio.create_task(push_record2serv(task_id, room_id, 'capturing', record))
 
     async def poker_play(self, task_id: str, room_id: str):                     # 游戏记录, 牌局开始
-        record = deepcopy(init_poker)
+        # record = deepcopy(init_poker)
         SIG = 'P2' if not exists(Template(r'pics/playing/3.png')) else 'P3'     # 判断是两个玩家还是三个玩家
         if SIG == 'P2':
             CORP_PLAYER.remove('PLAYER2')
             del POKER_RELA['PLAYER2']
 
+        print(f'SIG: {SIG}')
+
         self.mkpicsdir(task_id)                                                 # 创建相应截图保存目录
 
         while True:
             start = time.time()
-            # if exists(Template(r'pics/playing/6.png')) or exists(Template(r'pics/playing/7.png')):
-            # record = deepcopy(init_poker)                                       # 必须1s内分析完才可以这样
+            # if exists(Template(r'pics/playing/9.png')) and exists(Template(r'pics/playing/7.png')):                            # or exists(Template(r'pics/playing/7.png'))
+            record = deepcopy(init_poker)                                       # 必须1s内分析完才可以这样
 
             # 测试时注销，生产时启用
             status = get_living_status(task_id)
@@ -151,16 +158,22 @@ class RunIt():
                 return -1
 
             self.poco.click([0.525, 0.638])
+            self.poco.click([0.649, 0.847])
             snap_file = f'{now_path}/pics/snapshot/{task_id}/{id_worker.get_id()}.png'
             screen = mx4.snapshot(quality=99)                                             # 对屏幕进行完整截图
             logger.info('完成截图，准备分析...')
-            start2 = time.time()
-            await asyncio.create_task(cac(task_id, screen, record, SIG))
-            end2 = time.time()
-            print(f'cac: {end2 - start2}s')
-            logger.info(f'screenshot analysis done.')
-            # if exists(Template(r'pics/roomout/6.png')):                         # 判断牌局是否已经自然结束
-            #     return -2
+            if not exists(Template(r"/Users/antx/Code/tmp/airt/pics/playing/4.png")):
+                await asyncio.create_task(cac(task_id, screen, record, SIG))
+                set_living_status_redis(task_id, {'records': record})
+                logger.info(f'screenshot analysis done.')
+            else:
+                  # logger.info('11111111')
+                # local_cards, p1_cards, rds = get_living_cards(task_id)
+                # if -1 in local_cards or -1 in p1_cards:
+                #     await asyncio.create_task(cac(task_id, screen, rds, SIG, 'local'))
+                #     set_living_status_redis(task_id, {'records': rds})
+                if exists(Template(r'pics/roomout/6.png')):                         # 判断牌局是否已经自然结束
+                    return -2
 
             end = time.time()
             logger.info('已完成所有操作...')
@@ -185,12 +198,13 @@ class RunIt():
                     del_redis_record(task_id)
                     continue
                 if status == 'capturing':
-                    result = await asyncio.create_task(self.poker_play(task_id, room_id))
-                    set_living_status_redis(task_id, {'status': 'finished'})
-                    if result == -1:
-                        self.room_stop_out(room_id)
-                    else:
-                        self.room_normal_out(room_id)
+                    if not exists(Template(r'pics/roomin/10.png')):
+                        result = await asyncio.create_task(self.poker_play(task_id, room_id))
+                        set_living_status_redis(task_id, {'status': 'finished'})
+                        if result == -1:
+                            self.room_stop_out(room_id)
+                        else:
+                            self.room_normal_out(room_id)
 
             end = time.time()
             logger.info('已完成所有操作...')
@@ -198,13 +212,13 @@ class RunIt():
 
 if __name__ == '__main__':
     runit = RunIt(poco_mx4)
-    # room_id = 272591
+    # room_id = 556495
 
     # 实际生产用
     asyncio.run(runit.dia())
-    runit.dia()
 
     # 开发测试用
     # runit.room_in(room_id)
     # asyncio.run(runit.poker_play(room_id, room_id))
     # runit.room_stop_out(room_id)
+    # runit.room_normal_out(room_id)

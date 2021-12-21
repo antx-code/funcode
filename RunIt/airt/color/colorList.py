@@ -142,12 +142,12 @@ def jokerColorList():
     dict['red2'] = color_list
 
     # 橙色
-    # lower_orange = np.array([11, 43, 46])
-    # upper_orange = np.array([25, 255, 255])
-    # color_list = []
-    # color_list.append(lower_orange)
-    # color_list.append(upper_orange)
-    # dict['orange'] = color_list
+    lower_orange = np.array([11, 43, 46])
+    upper_orange = np.array([25, 255, 255])
+    color_list = []
+    color_list.append(lower_orange)
+    color_list.append(upper_orange)
+    dict['orange'] = color_list
 
     # 黄色
     lower_yellow = np.array([26, 43, 46])
@@ -166,12 +166,12 @@ def jokerColorList():
     dict['green'] = color_list
 
     # 青色
-    # lower_cyan = np.array([78, 43, 46])
-    # upper_cyan = np.array([99, 255, 255])
-    # color_list = []
-    # color_list.append(lower_cyan)
-    # color_list.append(upper_cyan)
-    # dict['cyan'] = color_list
+    lower_cyan = np.array([78, 43, 46])
+    upper_cyan = np.array([99, 255, 255])
+    color_list = []
+    color_list.append(lower_cyan)
+    color_list.append(upper_cyan)
+    dict['cyan'] = color_list
 
     # 蓝色
     lower_blue = np.array([100, 43, 46])
@@ -182,12 +182,12 @@ def jokerColorList():
     dict['blue'] = color_list
 
     # 紫色
-    # lower_purple = np.array([125, 43, 46])
-    # upper_purple = np.array([155, 255, 255])
-    # color_list = []
-    # color_list.append(lower_purple)
-    # color_list.append(upper_purple)
-    # dict['purple'] = color_list
+    lower_purple = np.array([125, 43, 46])
+    upper_purple = np.array([155, 255, 255])
+    color_list = []
+    color_list.append(lower_purple)
+    color_list.append(upper_purple)
+    dict['purple'] = color_list
 
     return dict
 

@@ -7,14 +7,14 @@ from airtest.aircv import *
 from comser.funcs import *
 import os
 from poc import poker_dia
-# from comser.background import BackgroundTasks
+from comser.background import BackgroundTasks
 from fastapi.concurrency import run_in_threadpool
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 uvloop.install()
 
 CONF = config['CORP_IMG']
 CORP_PLAYER = ['LOCAL', 'PLAYER1', 'PLAYER2']
-CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP']
+CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP', 'HAND']
 
 POKER_RELA = {
     'LOCAL': 'local',
@@ -24,10 +24,12 @@ POKER_RELA = {
     'MID': 'mid',
     'TAIL': 'tail',
     'DROP': 'drop',
-    # 'HAND': 'hand'
+    'HAND': 'hand'
 }
 
 now_path = os.getcwd()
+
+# bk = BackgroundTasks()
 
 # async def ca(task_id, screen, record, SIG):
 #     tasks = []
@@ -47,9 +49,8 @@ now_path = os.getcwd()
 #                 tasks.append(poker_dia(filename, task_id, record, POKER_RELA[player], POKER_RELA[dao_poker], inx))
 #     await asyncio.gather(*tasks)
 
-async def cac(task_id, screen, record, SIG):
-    start1 = time.time()
-    tasks = []
+async def cac(task_id, screen, record, SIG, mode='all'):
+    # if mode == 'all':
     for player in CORP_PLAYER:
         CONF_BASE = CONF[player][SIG] if player != 'LOCAL' else CONF[player]
         for dao_poker in CORP_POKER:
@@ -59,18 +60,23 @@ async def cac(task_id, screen, record, SIG):
                 filename = f'{now_path}/pics/playing/{task_id}/{player}/{dao_poker}/{inx}.png'
                 try:
                     ci = aircv.crop_image(screen, dk)
-                    aircv.imwrite(filename, ci, quality=99)
+                    aircv.imwrite(filename, ci, quality=10)
                 except Exception as e:
-                    return
-                # print('bk-pre')
-                # bk.add_task(poker_dia, filename, task_id, record, POKER_RELA[player], POKER_RELA[dao_poker], inx)
+                    continue
                 await run_in_threadpool(lambda: poker_dia(filename, task_id, record, POKER_RELA[player], POKER_RELA[dao_poker], inx))
-                # print('bk-af')
 
-                # tasks.append(poker_dia(filename, task_id, record, POKER_RELA[player], POKER_RELA[dao_poker], inx))
-    # await asyncio.gather(*tasks)
-    end1 = time.time()
-    print(f'poker_dia: {end1 - start1}s')
+    # else:
+    #     for player in CORP_PLAYER:
+    #         CONF_BASE = CONF[player][SIG] if player != 'LOCAL' else CONF[player]
+    #         for inx, dk in enumerate(CONF_BASE['TAIL']):  # 对每个位置进行图像分割， 并保存进相应的文件夹
+    #             filename = f'{now_path}/pics/playing/{task_id}/{player}/TAIL/{inx}.png'
+    #             try:
+    #                 ci = aircv.crop_image(screen, dk)
+    #                 aircv.imwrite(filename, ci, quality=10)
+    #             except Exception as e:
+    #                 continue
+    #             await run_in_threadpool(
+    #                 lambda: poker_dia(filename, task_id, record, POKER_RELA[player], POKER_RELA['TAIL'], inx))
 
 if __name__ == '__main__':
     start = time.time()

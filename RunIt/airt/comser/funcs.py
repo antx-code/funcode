@@ -83,3 +83,10 @@ async def push_record2serv(task_id: str, room: int, status: str, record: dict):
 def del_redis_record(task_id):
     redis_service = redis_connection(redis_db=1)
     redis_service.redis_client.srem('recording', task_id)
+
+@logger.catch(level='ERROR')
+def get_living_cards(task_id):
+    redis_service = redis_connection(redis_db=1)
+    infos = redis_service.get_key_expire_content(task_id)
+    data = json.loads(infos)
+    return data['records']['local']['tail'], data['records']['player1']['tail'], data['records']

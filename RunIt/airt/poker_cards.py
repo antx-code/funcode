@@ -5,26 +5,26 @@
 
 init_poker = {
     'local': {
-        'head': [None, None, None],
-        'mid': [None, None, None, None, None],
-        'tail': [None, None, None, None, None],
-        'drop': [None, None, None, None],
-        'hand': [None, None, None]
+        'head': [-1, -1, -1],
+        'mid': [-1, -1, -1, -1, -1],
+        'tail': [-1, -1, -1, -1, -1],
+        'drop': [-1, -1, -1, -1],
+        'hand': [-1, -1, -1]
     },
     'player1': {
-        'head': [None, None, None],
-        'mid': [None, None, None, None, None],
-        'tail': [None, None, None, None, None],
-        'drop': [None, None, None, None],
-        'hand': [None, None, None]
+        'head': [-1, -1, -1],
+        'mid': [-1, -1, -1, -1, -1],
+        'tail': [-1, -1, -1, -1, -1],
+        'drop': [-1, -1, -1, -1],
+        'hand': [-1, -1, -1]
     },
     'player2': {
-            'head': [None, None, None],
-            'mid': [None, None, None, None, None],
-            'tail': [None, None, None, None, None],
-            'drop': [None, None, None, None],
-            'hand': [None, None, None]
-        }
+        'head': [-1, -1, -1],
+        'mid': [-1, -1, -1, -1, -1],
+        'tail': [-1, -1, -1, -1, -1],
+        'drop': [-1, -1, -1, -1],
+        'hand': [-1, -1, -1]
+    }
 }
 
 # Square

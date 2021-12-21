@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
+from copy import deepcopy
 from color.colorList import getColorList
+from color.colorList import jokerColorList
 
 def get_color_count(filename):            # 获取图片颜色
     Img = cv2.imread(filename)                  # 读入一幅图像
@@ -8,7 +10,10 @@ def get_color_count(filename):            # 获取图片颜色
         'blue': 0,
         'black': 0,
         'red': 0,
-        'green': 0
+        'green': 0,
+        'yellow': 0,
+        'gray': 0,
+        'cyan':0
     }
     kernel_2 = np.ones((2, 2), np.uint8)        # 2x2的卷积核
     kernel_3 = np.ones((3, 3), np.uint8)        # 3x3的卷积核
@@ -16,7 +21,8 @@ def get_color_count(filename):            # 获取图片颜色
 
     if Img is not None:  # 判断图片是否读入
         HSV = cv2.cvtColor(Img, cv2.COLOR_BGR2HSV)  # 把BGR图像转换为HSV格式
-        color_dict = getColorList()
+        # color_dict = getColorList()
+        color_dict = jokerColorList()
         for d in color_dict:
             # mask是把HSV图片中在颜色范围内的区域变成白色，其他区域变成黑色
             mask = cv2.inRange(HSV, color_dict[d][0], color_dict[d][1])
@@ -56,14 +62,29 @@ def get_color_count(filename):            # 获取图片颜色
                 color_count_result['red'] += p
             if d == 'black':
                 color_count_result['black'] += p
-            if d == 'green':
+            if d == 'green' or d == 'cyan':
                 color_count_result['green'] += p
+            if d == 'yellow' or d == 'orange':
+                color_count_result['yellow'] += p
+            if d == 'gray':
+                color_count_result['gray'] += p
+            if d == 'cyan':
+                color_count_result['cyan'] += p
         return color_count_result
 
 def poker_max_color(filename):            # 获取颜色值最大的颜色
     color_count_dict = get_color_count(filename)
+    col_dict = deepcopy(color_count_dict)
     max_color = list(color_count_dict.keys())[list(color_count_dict.values()).index(max(color_count_dict.values()))]
-    return max_color
+    del col_dict['gray']
+    del col_dict['yellow']
+    no_max_color = list(col_dict.keys())[list(col_dict.values()).index(max(col_dict.values()))]
+    color_list = get_max_color_key(filename)
+    try:
+        color_list.remove(max_color)
+    except Exception as e:
+        pass
+    return max_color, color_count_dict, color_list, no_max_color
 
 def get_max_color_key(filename):          # 获取值不为0的颜色
     color_keys = []
@@ -75,7 +96,8 @@ def get_max_color_key(filename):          # 获取值不为0的颜色
     return color_keys
 
 if __name__ == '__main__':
-    filename = '/pics/playing/3534616464566779904/PLAYER1/TAIL/1.png'
+    filename = '/Users/antx/Code/tmp/airt/pics/playing/3541115199551438848/LOCAL/DROP/2.png'
     # color_count = get_color_count(filename)
     # print(color_count)
-    # print(poker_max_color(filename))
+    print(poker_max_color(filename))
+    # print(get_max_color_key(filename))
