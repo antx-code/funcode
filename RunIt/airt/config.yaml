@@ -4,7 +4,7 @@ REDIS:
     PORT: 6379
   SERVER:
     HOST: '127.0.0.1'
-    PORT: 57878
+    PORT: 10989
     PASSWORD: runit@redis
 
 CORP_IMG:
