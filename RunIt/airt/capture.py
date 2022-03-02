@@ -4,9 +4,13 @@ import uvloop
 from airtest.core.api import *
 from airtest.aircv import *
 from poco.drivers.android.uiautomation import AndroidUiautomationPoco
+from airtest.core.android import Android
 import logging
 from copy import deepcopy
 import os
+
+from torch.onnx.symbolic_opset9 import to
+
 from poker_cards import *
 from comser.funcs import *
 from poc import poker_dia
@@ -41,9 +45,17 @@ id_worker = IdWorker(0, 0)
 
 init_device('Android')
 mx4 = connect_device('Android://127.0.0.1:5037/emulator-5554?cap_method=javacap&touch_method=adb')
+
 # mx4 = connect_device('Android://127.0.0.1:5037/D5F7N18531004884?cap_method=javacap&touch_method=adb')
 
 poco_mx4 = AndroidUiautomationPoco(mx4, use_airtest_input=True, screenshot_each_action=False)
+
+# 固定横屏模式
+mx4._current_orientation = 1
+
+logger.debug(f'{mx4._current_orientation}')
+r = poco_mx4.adb_client.shell('content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:1')
+logger.info(f'r->{r}')
 
 now_path = os.getcwd()
 
@@ -137,8 +149,10 @@ class RunIt():
 
     async def poker_play(self, task_id: str, room_id: str):                     # 游戏记录, 牌局开始
         # record = deepcopy(init_poker)
-        SIG = 'P2' if not exists(Template(r'pics/playing/3.png')) else 'P3'     # 判断是两个玩家还是三个玩家
-        if SIG == 'P2':
+        phonew, phoneh = mx4.get_current_resolution()  # 获取手机分辨率
+        logger.info(f'手机分辨率: {phonew}*{phoneh}')
+        SIG = 'TPG' if not exists(Template(r'pics/playing/3.png')) else 'MPG'     # 判断是两个玩家还是三个玩家
+        if SIG == 'TPG':
             CORP_PLAYER.remove('PLAYER2')
             del POKER_RELA['PLAYER2']
 
@@ -163,7 +177,7 @@ class RunIt():
             screen = mx4.snapshot(quality=99)                                             # 对屏幕进行完整截图
             logger.info('完成截图，准备分析...')
             if not exists(Template(r"/Users/antx/Code/tmp/airt/pics/playing/4.png")):
-                await asyncio.create_task(cac(task_id, screen, record, SIG))
+                await asyncio.create_task(cac(task_id, screen, record, SIG, phonew, phoneh))
                 set_living_status_redis(task_id, {'records': record})
                 logger.info(f'screenshot analysis done.')
             else:
@@ -211,11 +225,14 @@ class RunIt():
             logger.info(f'共耗时: {end - start}s.')
 
 if __name__ == '__main__':
+    phonew, phoneh = mx4.get_current_resolution()  # 获取手机分辨率
+    logger.info(f'手机分辨率: {phonew}*{phoneh}')
+
     runit = RunIt(poco_mx4)
     # room_id = 556495
 
     # 实际生产用
-    asyncio.run(runit.dia())
+    # asyncio.run(runit.dia())
 
     # 开发测试用
     # runit.room_in(room_id)

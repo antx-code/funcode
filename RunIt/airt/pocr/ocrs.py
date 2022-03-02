@@ -12,7 +12,7 @@ from poker_cards import *
 reader = easyocr.Reader(['en'])
 
 CONF = config['COLOR']
-ocr = ddddocr.DdddOcr()
+ocr = ddddocr.DdddOcr(show_ad=False)
 
 def easyocr_poker(filename):
     result = reader.readtext(filename, detail=0)

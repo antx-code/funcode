@@ -49,17 +49,28 @@ now_path = os.getcwd()
 #                 tasks.append(poker_dia(filename, task_id, record, POKER_RELA[player], POKER_RELA[dao_poker], inx))
 #     await asyncio.gather(*tasks)
 
-async def cac(task_id, screen, record, SIG, mode='all'):
+async def cac(task_id, screen, record, SIG, phonew, phoneh, mode='all'):
     # if mode == 'all':
-    for player in CORP_PLAYER:
+    pin = 'HP' if int(phonew) > int(phoneh) else 'SP'
+    logger.debug(f'屏幕模式: {pin}')
+    for player in CORP_PLAYER[pin]:
         CONF_BASE = CONF[player][SIG] if player != 'LOCAL' else CONF[player]
         for dao_poker in CORP_POKER:
             if not CONF_BASE[dao_poker]:
                 continue
             for inx, dk in enumerate(CONF_BASE[dao_poker]):  # 对每个位置进行图像分割， 并保存进相应的文件夹
                 filename = f'{now_path}/pics/playing/{task_id}/{player}/{dao_poker}/{inx}.png'
+                tad = []
                 try:
-                    ci = aircv.crop_image(screen, dk)
+                    # ci = aircv.crop_image(screen, dk)
+                    for inx, i in enumerate(dk):
+                        if inx == 0 or inx == 1:
+                            i = int(i * phonew)
+                        else:
+                            i = int(i * phoneh)
+                        tad.append(i)
+                    logger.info(f'tad: {tad}')
+                    ci = aircv.crop_image(screen, tad)
                     aircv.imwrite(filename, ci, quality=10)
                 except Exception as e:
                     continue

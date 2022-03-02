@@ -4,13 +4,15 @@ import asyncio
 import uvloop
 import httpx
 import sys
+import os
 from loguru import logger
 import jwt
 from init import config
-# sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
-sys.path.append('/home/yonglin/RunIt/app')
+path = os.getcwd()
+sys.path.append(path)
 from comser.redis_service import RedisService
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
 @logger.catch(level='ERROR')
 def now():

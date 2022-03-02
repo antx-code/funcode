@@ -1,7 +1,10 @@
 from loguru import logger
 import yaml
 import sys
-sys.path.append('/home/antx/Code/tmp/funcode/RunIt/app/')
+import os
+
+path = os.getcwd()
+sys.path.append(f'{path}/RunIt/app/')
 
 @logger.catch(level='ERROR')
 def get_config():
