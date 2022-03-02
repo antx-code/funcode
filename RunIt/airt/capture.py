@@ -225,14 +225,14 @@ class RunIt():
             logger.info(f'共耗时: {end - start}s.')
 
 if __name__ == '__main__':
-    phonew, phoneh = mx4.get_current_resolution()  # 获取手机分辨率
-    logger.info(f'手机分辨率: {phonew}*{phoneh}')
+    # phonew, phoneh = mx4.get_current_resolution()  # 获取手机分辨率
+    # logger.info(f'手机分辨率: {phonew}*{phoneh}')
 
     runit = RunIt(poco_mx4)
     # room_id = 556495
 
     # 实际生产用
-    # asyncio.run(runit.dia())
+    asyncio.run(runit.dia())
 
     # 开发测试用
     # runit.room_in(room_id)
