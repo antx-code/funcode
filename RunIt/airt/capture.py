@@ -80,24 +80,37 @@ class RunIt():
         self.poco.click([0.471, 0.418])                                         # 点击屏幕
         self.poco.click([0.471, 0.418])                                         # 点击"进入房间"
         # self.poco.click([0.453, 0.842])                                       # 点击"空位"
-        while not exists(Template(r"pics/roomin/6.png")):
-            # self.poco.click([0.453, 0.842])                                   # 点击"空位"
-            try:
-                touch(Template(r'pics/roomin/10.png'))                          # 点击"空位"
-            except Exception as e:
-                self.poco.click([0.453, 0.842])                                 # 点击"空位"
-            if exists(Template(r"pics/roomin/8.png")):
-                self.poco.click([0.051, 0.413])
-                break
-            if exists(Template(r"pics/roomin/6.png")):
-                self.poco.click([0.508, 0.698])                                 # 点击"带分进入"
-                break
-            if exists(Template(r'pics/roomin/9.png')):
-                self.poco.click([0.508, 0.589])                                 # 点击"确定"
-            if exists(Template(r'pics/roomin/7.png')):
-                touch(Template(r'pics/roomin/7.png'))
-                break
-        # self.poco.click([0.528, 0.654])                                       # 点击"准备"
+
+        # 正常正确逻辑
+        # while not exists(Template(r"pics/roomin/6.png")):
+        #     # self.poco.click([0.453, 0.842])                                   # 点击"空位"
+        #
+        #
+        #     try:
+        #         touch(Template(r'pics/roomin/10.png'))                          # 点击"空位"
+        #     except Exception as e:
+        #         self.poco.click([0.453, 0.842])                                 # 点击"空位"
+        #     if exists(Template(r"pics/roomin/8.png")):
+        #         self.poco.click([0.051, 0.413])
+        #         break
+        #     if exists(Template(r"pics/roomin/6.png")):
+        #         self.poco.click([0.508, 0.698])                                 # 点击"带分进入"
+        #         break
+        #     if exists(Template(r'pics/roomin/9.png')):
+        #         self.poco.click([0.508, 0.589])                                 # 点击"确定"
+        #
+        #     # if exists(Template(r'pics/roomin/7.png')):
+        #     #     touch(Template(r'pics/roomin/7.png'))
+        #     #     break
+
+        # yuanhuihui's mac 临时逻辑
+        self.poco.click([0.453, 0.842])
+        time.sleep(0.5)
+        self.poco.click([0.508, 0.698])
+        time.sleep(0.5)
+
+
+        self.poco.click([0.528, 0.654])                                       # 点击"准备"
         # touch(Template(r'pics/roomin/7.png'))
         logger.info(f'已成功进入牌局房间{room_id}，并进入准备，等待游戏...')
         time.sleep(3)
