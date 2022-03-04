@@ -134,7 +134,11 @@ def poker_dia(filename, task_id, records, record_player, record_dao_poker, inx):
     print(f'********** poker number: {record} **********')
 
     # 测试时注销，生产时打开
-    print(f'records[{record_player}][{record_dao_poker}][{inx}]: {records[record_player][record_dao_poker][inx]}')
+    if not records:
+         pass
+    else:
+        # logger.warning(f'records: {records}')
+        logger.warning(f'records[{record_player}][{record_dao_poker}][{inx}]: {records[record_player][record_dao_poker][inx]}')
 
     # if record == -1 and records[record_player][record_dao_poker][inx] != -1:
     #     pass

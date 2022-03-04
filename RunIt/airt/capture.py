@@ -82,7 +82,10 @@ class RunIt():
         # self.poco.click([0.453, 0.842])                                       # 点击"空位"
         while not exists(Template(r"pics/roomin/6.png")):
             # self.poco.click([0.453, 0.842])                                   # 点击"空位"
-            touch(Template(r'pics/roomin/10.png'))                              # 点击"空位"
+            try:
+                touch(Template(r'pics/roomin/10.png'))                          # 点击"空位"
+            except Exception as e:
+                self.poco.click([0.453, 0.842])                                 # 点击"空位"
             if exists(Template(r"pics/roomin/8.png")):
                 self.poco.click([0.051, 0.413])
                 break
@@ -91,8 +94,11 @@ class RunIt():
                 break
             if exists(Template(r'pics/roomin/9.png')):
                 self.poco.click([0.508, 0.589])                                 # 点击"确定"
+            if exists(Template(r'pics/roomin/7.png')):
+                touch(Template(r'pics/roomin/7.png'))
+                break
         # self.poco.click([0.528, 0.654])                                       # 点击"准备"
-        touch(Template(r'pics/roomin/7.png'))
+        # touch(Template(r'pics/roomin/7.png'))
         logger.info(f'已成功进入牌局房间{room_id}，并进入准备，等待游戏...')
         time.sleep(3)
 
@@ -149,14 +155,19 @@ class RunIt():
 
     async def poker_play(self, task_id: str, room_id: str):                     # 游戏记录, 牌局开始
         # record = deepcopy(init_poker)
+
+        # 固定横屏模式
+        mx4._current_orientation = 1
+        r = poco_mx4.adb_client.shell('content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:1')
         phonew, phoneh = mx4.get_current_resolution()  # 获取手机分辨率
         logger.info(f'手机分辨率: {phonew}*{phoneh}')
+
         SIG = 'TPG' if not exists(Template(r'pics/playing/3.png')) else 'MPG'     # 判断是两个玩家还是三个玩家
         if SIG == 'TPG':
             CORP_PLAYER.remove('PLAYER2')
             del POKER_RELA['PLAYER2']
 
-        print(f'SIG: {SIG}')
+        logger.error(f'SIG: {SIG}')
 
         self.mkpicsdir(task_id)                                                 # 创建相应截图保存目录
 
@@ -176,9 +187,10 @@ class RunIt():
             snap_file = f'{now_path}/pics/snapshot/{task_id}/{id_worker.get_id()}.png'
             screen = mx4.snapshot(quality=99)                                             # 对屏幕进行完整截图
             logger.info('完成截图，准备分析...')
-            if not exists(Template(r"/Users/antx/Code/tmp/airt/pics/playing/4.png")):
+            if not exists(Template(r"pics/playing/4.png")):
                 await asyncio.create_task(cac(task_id, screen, record, SIG, phonew, phoneh))
                 set_living_status_redis(task_id, {'records': record})
+                logger.debug({'records': record})
                 logger.info(f'screenshot analysis done.')
             else:
                   # logger.info('11111111')
@@ -229,7 +241,7 @@ if __name__ == '__main__':
     # logger.info(f'手机分辨率: {phonew}*{phoneh}')
 
     runit = RunIt(poco_mx4)
-    # room_id = 556495
+    # room_id = 739059
 
     # 实际生产用
     asyncio.run(runit.dia())

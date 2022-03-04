@@ -53,8 +53,8 @@ async def cac(task_id, screen, record, SIG, phonew, phoneh, mode='all'):
     # if mode == 'all':
     pin = 'HP' if int(phonew) > int(phoneh) else 'SP'
     logger.debug(f'屏幕模式: {pin}')
-    for player in CORP_PLAYER[pin]:
-        CONF_BASE = CONF[player][SIG] if player != 'LOCAL' else CONF[player]
+    for player in CORP_PLAYER:
+        CONF_BASE = CONF[pin][player][SIG] if player != 'LOCAL' else CONF[pin][player]
         for dao_poker in CORP_POKER:
             if not CONF_BASE[dao_poker]:
                 continue
@@ -63,13 +63,16 @@ async def cac(task_id, screen, record, SIG, phonew, phoneh, mode='all'):
                 tad = []
                 try:
                     # ci = aircv.crop_image(screen, dk)
-                    for inx, i in enumerate(dk):
-                        if inx == 0 or inx == 1:
-                            i = int(i * phonew)
+                    for inxx, i in enumerate(dk):
+                        if inxx == 0 or inxx == 2:
+                            r = int(i * phonew)
+                            logger.debug(f'{inxx} - {i} * {phonew} = {r}')
                         else:
-                            i = int(i * phoneh)
-                        tad.append(i)
-                    logger.info(f'tad: {tad}')
+                            r = int(i * phoneh)
+                            logger.debug(f'{inxx} - {i} * {phoneh} = {r}')
+                        tad.append(r)
+                    logger.debug(f'{player}/{dao_poker}/{inx}-ori: {dk}')
+                    logger.error(f'{player}/{dao_poker}/{inx}-tad: {tad}')
                     ci = aircv.crop_image(screen, tad)
                     aircv.imwrite(filename, ci, quality=10)
                 except Exception as e:
