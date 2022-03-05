@@ -175,6 +175,9 @@ class RunIt():
         phonew, phoneh = mx4.get_current_resolution()  # 获取手机分辨率
         logger.info(f'手机分辨率: {phonew}*{phoneh}')
 
+        # SIG表示是双人游戏还是三/多人游戏
+        # corp_analysis文件中的pin表示是横屏还是竖屏
+
         SIG = 'TPG' if not exists(Template(r'pics/playing/3.png')) else 'MPG'     # 判断是两个玩家还是三个玩家
         if SIG == 'TPG':
             CORP_PLAYER.remove('PLAYER2')
