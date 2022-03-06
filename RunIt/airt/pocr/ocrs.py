@@ -1,12 +1,8 @@
-# import asyncio
-# import uvloop
 import time
 import ddddocr
 import easyocr
 from init import config
 from poker_cards import *
-# asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-# uvloop.install()
 
 # reader = easyocr.Reader(['ch_sim','en'])
 reader = easyocr.Reader(['en'])

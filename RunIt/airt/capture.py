@@ -1,16 +1,9 @@
 # poco airtest
-import asyncio
-import uvloop
 from airtest.core.api import *
 from airtest.aircv import *
 from poco.drivers.android.uiautomation import AndroidUiautomationPoco
-from airtest.core.android import Android
 import logging
 from copy import deepcopy
-import os
-
-from torch.onnx.symbolic_opset9 import to
-
 from poker_cards import *
 from comser.funcs import *
 from poc import poker_dia
@@ -28,7 +21,6 @@ lgr.setLevel(logging.INFO)
 CONF = config['CORP_IMG']
 CORP_PLAYER = ['LOCAL', 'PLAYER1', 'PLAYER2']
 CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP', 'HAND']
-# CORP_POKER = ['HEAD', 'MID', 'TAIL', 'DROP']
 
 POKER_RELA = {
     'LOCAL': 'local',
@@ -45,8 +37,6 @@ id_worker = IdWorker(0, 0)
 
 init_device('Android')
 mx4 = connect_device('Android://127.0.0.1:5037/emulator-5554?cap_method=javacap&touch_method=adb')
-
-# mx4 = connect_device('Android://127.0.0.1:5037/D5F7N18531004884?cap_method=javacap&touch_method=adb')
 
 poco_mx4 = AndroidUiautomationPoco(mx4, use_airtest_input=True, screenshot_each_action=False)
 
@@ -74,7 +64,6 @@ class RunIt():
 
     def room_in(self, room_id: int):                                            # 进入游戏房间并初始化数据结构, 进入房间
         self.poco.click([0.302, 0.953])                                         # 点击"约局"
-        # self.poco.click([0.302, 0.953])
         self.poco.click([0.428, 0.347])                                         # room id 输入框
         text(str(room_id))                                                      # 输入房间号
         self.poco.click([0.471, 0.418])                                         # 点击屏幕
@@ -131,10 +120,7 @@ class RunIt():
                 self.poco.click([0.353, 0.589])
         except Exception as e:
             self.poco.click([0.353, 0.589])
-        # mx4.keyevent('BACK')
-        # mx4.keyevent('BACK')
         self.poco.click([0.505, 0.956])                                         # 点击"小飞机"
-        # self.poco.click([0.302, 0.953])                                       # 点击"约局"
         logger.info(f'已成功退出牌局房间{room_id}')
 
 ########################################################################
@@ -148,23 +134,6 @@ class RunIt():
                     os.mkdir(f'{now_path}/pics/playing/{task_id}/{player}/{dao_poker}')
         except Exception as e:
             pass
-
-    def corp_analysis(self, task_id, room_id, record, CONF_BASE, screen, record_player, record_dao_poker, scope, filename, inx):                      # 对截图图片裁剪并分析获取牌面信息
-
-        try:
-            ci = aircv.crop_image(screen, scope)
-            aircv.imwrite(filename, ci, quality=99)
-        except Exception as e:
-            return
-        # poker_record = await asyncio.create_task(poker_dia(filename))           # 对每个给定的牌面截图图片进行识别
-
-        poker_record = poker_dia(filename)
-        record[record_player][record_dao_poker][inx] = poker_record  # 更新相应位置识别后的牌面信息
-        logger.info(f"{record_player}-{record_dao_poker}-{inx}: {poker_record}")
-
-        # 测试时注销，生产时启用
-        set_living_status_redis(task_id, {'records': record})
-        # await asyncio.create_task(push_record2serv(task_id, room_id, 'capturing', record))
 
     async def poker_play(self, task_id: str, room_id: str):                     # 游戏记录, 牌局开始
         # record = deepcopy(init_poker)
@@ -202,18 +171,14 @@ class RunIt():
             self.poco.click([0.649, 0.847])
             snap_file = f'{now_path}/pics/snapshot/{task_id}/{id_worker.get_id()}.png'
             screen = mx4.snapshot(quality=99)                                             # 对屏幕进行完整截图
-            logger.info('完成截图，准备分析...')
+            logger.info('screenshot done, waiting ayalysis...')
             if not exists(Template(r"pics/playing/4.png")):
                 await asyncio.create_task(cac(task_id, screen, record, SIG, phonew, phoneh))
+                # 测试时注销，生产时启用
                 set_living_status_redis(task_id, {'records': record})
                 logger.debug({'records': record})
                 logger.info(f'screenshot analysis done.')
             else:
-                  # logger.info('11111111')
-                # local_cards, p1_cards, rds = get_living_cards(task_id)
-                # if -1 in local_cards or -1 in p1_cards:
-                #     await asyncio.create_task(cac(task_id, screen, rds, SIG, 'local'))
-                #     set_living_status_redis(task_id, {'records': rds})
                 if exists(Template(r'pics/roomout/6.png')):                         # 判断牌局是否已经自然结束
                     return -2
 
@@ -233,15 +198,19 @@ class RunIt():
                 status = get_living_status(task_id)
                 print(f'{task_id} status: {status}')
                 if status == 'pending' or status == 'connecting':
+                    # 测试时注销，生产时启用
                     set_living_status_redis(task_id, {'status': 'connecting'})
                     runit.room_in(room_id)
+                    # 测试时注销，生产时启用
                     set_living_status_redis(task_id, {'status': 'capturing'})
                 if status == 'stopped' or status == 'finished':
+                    # 测试时注销，生产时启用
                     del_redis_record(task_id)
                     continue
                 if status == 'capturing':
                     if not exists(Template(r'pics/roomin/10.png')):
                         result = await asyncio.create_task(self.poker_play(task_id, room_id))
+                        # 测试时注销，生产时启用
                         set_living_status_redis(task_id, {'status': 'finished'})
                         if result == -1:
                             self.room_stop_out(room_id)
@@ -257,7 +226,7 @@ if __name__ == '__main__':
     # logger.info(f'手机分辨率: {phonew}*{phoneh}')
 
     runit = RunIt(poco_mx4)
-    # room_id = 739059
+    # room_id = 764742
 
     # 实际生产用
     asyncio.run(runit.dia())
